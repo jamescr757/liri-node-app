@@ -18,15 +18,12 @@ const spotify = new Spotify({
 
 // use process argv to take in user input
 // slice the array from 3
-// switch case comparing index 0 to concert-this, spotify-this-song, movie-this, and do-what-it-says
-// default return something so the user knows it was invalid input
 let userTask = process.argv[2];
 let userInfo = process.argv.slice(3).join(" ");
 let bandsUrl;
 let movieUrl;
 
 // generic axios get url call
-// response function inputs optional
 function axiosCall(url, responseFunction) {
     axios.get(url)
     .then(response => responseFunction(response))
@@ -47,39 +44,44 @@ function bandsInTownResponseFunction(response) {
     console.log(``); 
     console.log(``); 
 
+    // if no error but data array has no data
+    // else loop through array and display info
     if (response.data.length === 0) {
         console.log(chalk.green(userInfo + ' does not have any upcoming shows'));
         console.log("");
         console.log("");
+    } else {
+        response.data.forEach(element => {
+
+            if (element.venue.country === "United States") {
+                console.log(
+                    chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                    element.venue.name + " -- " +
+                    chalk.green(element.venue.city + ", " +
+                    element.venue.region)
+                );
+
+            } else {
+                console.log(
+                    chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                    element.venue.name + " -- " +
+                    chalk.green(element.venue.city + ", " +
+                    element.venue.country)
+                );
+            }
+    
+            console.log(``); 
+            console.log(``); 
+        });   
     }
 
-    response.data.forEach(element => {
-        if (element.venue.country === "United States") {
-            console.log(
-                chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
-                element.venue.name + " -- " +
-                chalk.green(element.venue.city + ", " +
-                element.venue.region)
-            );
-        } else {
-            console.log(
-                chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
-                element.venue.name + " -- " +
-                chalk.green(element.venue.city + ", " +
-                element.venue.country)
-            );
-        }
-
-        console.log(``); 
-        console.log(``); 
-    });
 
     console.log(chalk.blue("=========================================================================================================")); 
     console.log(``); 
 }
 
 // use spotify node package to call spotify api 
-// default search is "The Sign"
+// default search is "The Sign by Ace of Base"
 // display artist, song name, preview link, album title
 function spotifyResponseFunction() {
 
@@ -101,7 +103,8 @@ function spotifyResponseFunction() {
                 console.log("");
                 console.log(chalk.green("Song: ") + element.name); 
                 console.log("");
-                console.log(chalk.green("30 Second Preview: ") + element.preview_url); console.log(``);
+                console.log(chalk.green("30 Second Preview: ") + element.preview_url); 
+                console.log(``);
                 console.log(chalk.green("Album Title: ") + element.album.name);
                 
                 console.log(``);
@@ -112,7 +115,6 @@ function spotifyResponseFunction() {
             console.log(``); 
             console.log(chalk.blue("========================================================================================================")); 
             console.log(``);
-
         }
        
       });
@@ -149,6 +151,8 @@ function ombdResponseFunction(response) {
     console.log(``); 
 }
 
+// switch case function 
+// compare against concert-this, spotify-this-song, movie-this
 function switchCase() {
 
     switch (userTask) {
@@ -164,6 +168,9 @@ function switchCase() {
             spotifyResponseFunction();
             break;
 
+        // add user info to movie url
+        // if no user info, default to Mr. Nobody
+        // run axios call with movie function
         case 'movie-this':
             if (!userInfo) userInfo = "Mr.+Nobody"
             movieUrl = `https://omdbapi.com/?t=${userInfo}&apikey=${omdbApiKey}`;
@@ -196,16 +203,17 @@ function switchCase() {
 // conditional logic for do-what-it-says command 
 // update userTask with task from random.txt file
 // update userInfo 
+// else, run switch case with no updates
 if (userTask === "do-what-it-says") {
     fs.readFile('./random.txt', 'utf8', (error, data) => {
 
-        if (error) console.log(error);
+        if (error) return console.log(error);
 
         dataArray = data.split(',');
         userTask = dataArray[0];
         userInfo = dataArray[1];
-        userInfo = dataArray[1];
 
+        // need switch case here because asynchronous function
         switchCase();
     })
 } else {
