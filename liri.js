@@ -40,7 +40,7 @@ function axiosCall(url, responseFunction) {
 // display city info based on USA or not
 function bandsInTownResponseFunction(response) {
     console.log(``); 
-    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(chalk.yellow("=========================================================================================================")); 
     console.log(``); 
     console.log(``); 
 
@@ -76,7 +76,7 @@ function bandsInTownResponseFunction(response) {
     }
 
 
-    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(chalk.yellow("=========================================================================================================")); 
     console.log(``); 
 }
 
@@ -94,7 +94,7 @@ function spotifyResponseFunction() {
             console.log("");
         } else {
             console.log(``); 
-            console.log(chalk.blue("=========================================================================================================")); 
+            console.log(chalk.yellow("=========================================================================================================")); 
             console.log(``); 
             
             data.tracks.items.forEach(element => {
@@ -108,12 +108,12 @@ function spotifyResponseFunction() {
                 console.log(chalk.green("Album Title: ") + element.album.name);
                 
                 console.log(``);
-                console.log(chalk.yellow('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'));
+                console.log(chalk.blue('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'));
                 console.log(``);
             })
             
             console.log(``); 
-            console.log(chalk.blue("========================================================================================================")); 
+            console.log(chalk.yellow("========================================================================================================")); 
             console.log(``);
         }
        
@@ -127,7 +127,7 @@ function ombdResponseFunction(response) {
     const data = response.data;
 
     console.log(``); 
-    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(chalk.yellow("=========================================================================================================")); 
     console.log(``); 
 
     console.log(`${chalk.green('Title:')} ${data.Title}`); 
@@ -147,7 +147,7 @@ function ombdResponseFunction(response) {
     console.log(`${chalk.green('Actors:')} ${data.Actors}`);
 
     console.log(``); 
-    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(chalk.yellow("=========================================================================================================")); 
     console.log(``); 
 }
 
