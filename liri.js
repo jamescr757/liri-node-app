@@ -20,9 +20,8 @@ const spotify = new Spotify({
 // slice the array from 3
 // switch case comparing index 0 to concert-this, spotify-this-song, movie-this, and do-what-it-says
 // default return something so the user knows it was invalid input
-const userTask = process.argv[2];
-let userInfoPlus = process.argv.slice(3).join("+");
-let userInfoSpace = process.argv.slice(3).join(" ");
+let userTask = process.argv[2];
+let userInfo = process.argv.slice(3).join(" ");
 let bandsUrl;
 let movieUrl;
 
@@ -32,9 +31,8 @@ function axiosCall(url, responseFunction) {
     axios.get(url)
     .then(response => responseFunction(response))
     .catch(error => {
-        console.log(error.response.status)
         console.log("");
-        console.log(`Please input a valid search term`);
+        console.log(chalk.green('Please input a valid search term'));
         console.log("");
     });
 }
@@ -44,44 +42,79 @@ function axiosCall(url, responseFunction) {
 // loop through data array and log the info
 // display city info based on USA or not
 function bandsInTownResponseFunction(response) {
-    console.log(""); console.log("");
+    console.log(``); 
+    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(``); 
+    console.log(``); 
+
+    if (response.data.length === 0) {
+        console.log(chalk.green(userInfo + ' does not have any upcoming shows'));
+        console.log("");
+        console.log("");
+    }
 
     response.data.forEach(element => {
         if (element.venue.country === "United States") {
             console.log(
-                chalk.blue(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
                 element.venue.name + " -- " +
-                chalk.blue(element.venue.city + ", " +
+                chalk.green(element.venue.city + ", " +
                 element.venue.region)
             );
         } else {
             console.log(
-                chalk.blue(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                chalk.green(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
                 element.venue.name + " -- " +
-                chalk.blue(element.venue.city + ", " +
+                chalk.green(element.venue.city + ", " +
                 element.venue.country)
             );
         }
 
-        console.log(""); console.log("");
+        console.log(``); 
+        console.log(``); 
     });
+
+    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(``); 
 }
 
 // use spotify node package to call spotify api 
 // default search is "The Sign"
+// display artist, song name, preview link, album title
 function spotifyResponseFunction() {
 
-    if (!userInfoSpace) userInfoSpace = "The Sign";
+    if (!userInfo) userInfo = "The Sign Ace of Base";
 
-    spotify.search({ type: 'track', query: userInfoSpace }, function(error, data) {
+    spotify.search({ type: 'track', query: userInfo }, function(error, data) {
         if (error) {
             console.log("");
-            console.log(`Please input a valid search term`);
+            console.log(chalk.green('Please input a valid search term'));
             console.log("");
-            return console.log('Error occurred: ' + error);
+        } else {
+            console.log(``); 
+            console.log(chalk.blue("=========================================================================================================")); 
+            console.log(``); 
+            
+            data.tracks.items.forEach(element => {
+                
+                console.log(chalk.green("Artist name: ") + element.artists[0].name); 
+                console.log("");
+                console.log(chalk.green("Song: ") + element.name); 
+                console.log("");
+                console.log(chalk.green("30 Second Preview: ") + element.preview_url); console.log(``);
+                console.log(chalk.green("Album Title: ") + element.album.name);
+                
+                console.log(``);
+                console.log(chalk.yellow('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++'));
+                console.log(``);
+            })
+            
+            console.log(``); 
+            console.log(chalk.blue("========================================================================================================")); 
+            console.log(``);
+
         }
        
-      console.log(data.tracks.items[0]); 
       });
 }
 
@@ -89,55 +122,92 @@ function spotifyResponseFunction() {
 // response.data has all those properties
 // grab keys Title, Year, Ratings[0].Value, Ratings[1].Value, Country, Language, Plot, Actors
 function ombdResponseFunction(response) {
-    console.log(""); console.log("");
-    console.log(`${chalk.green('Title:')} ${response.data.Title}`); console.log("");
-    console.log(`${chalk.green('Release Year:')} ${response.data.Year}`); console.log("");
-    console.log(`${chalk.green('IMDb Rating:')} ${response.data.Ratings[0].Value}`); console.log("");
-    console.log(`${chalk.green('Rotten Tomatoes Rating:')} ${response.data.Ratings[1].Value}`); console.log("");
-    console.log(`${chalk.green('Country:')} ${response.data.Country}`); console.log("");
-    console.log(`${chalk.green('Language:')} ${response.data.Language}`); console.log("");
-    console.log(`${chalk.green('Plot:')} ${response.data.Plot}`); console.log("");
-    console.log(`${chalk.green('Actors:')} ${response.data.Actors}`);
-    console.log(""); console.log("");
+    const data = response.data;
+
+    console.log(``); 
+    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(``); 
+
+    console.log(`${chalk.green('Title:')} ${data.Title}`); 
+    console.log("");
+    console.log(`${chalk.green('Release Year:')} ${data.Year}`); 
+    console.log("");
+    console.log(`${chalk.green('IMDb Rating:')} ${data.Ratings[0].Value}`); 
+    console.log("");
+    console.log(`${chalk.green('Rotten Tomatoes Rating:')} ${data.Ratings[1].Value}`); 
+    console.log("");
+    console.log(`${chalk.green('Country:')} ${data.Country}`); 
+    console.log("");
+    console.log(`${chalk.green('Language:')} ${data.Language}`); 
+    console.log("");
+    console.log(`${chalk.green('Plot:')} ${data.Plot}`); 
+    console.log("");
+    console.log(`${chalk.green('Actors:')} ${data.Actors}`);
+
+    console.log(``); 
+    console.log(chalk.blue("=========================================================================================================")); 
+    console.log(``); 
 }
 
-switch (userTask) {
+function switchCase() {
 
-    // add user info to bands url
-    // run axios call with bands function
-    case 'concert-this':
-        bandsUrl = `https://rest.bandsintown.com/artists/${userInfoPlus}/events?app_id=${bandsInTownApiKey}`;
-        axiosCall(bandsUrl, bandsInTownResponseFunction);
-        break;
+    switch (userTask) {
 
-    case 'spotify-this-song':
-        spotifyResponseFunction();
-        break;
+        // add user info to bands url
+        // run axios call with bands function
+        case 'concert-this':
+            bandsUrl = `https://rest.bandsintown.com/artists/${userInfo}/events?app_id=${bandsInTownApiKey}`;
+            axiosCall(bandsUrl, bandsInTownResponseFunction);
+            break;
 
-    case 'movie-this':
-        if (!userInfoPlus) userInfoPlus = "Mr.+Nobody"
-        movieUrl = `https://omdbapi.com/?t=${userInfoPlus}&apikey=${omdbApiKey}`;
-        axiosCall(movieUrl, ombdResponseFunction)
-        break;
+        case 'spotify-this-song':
+            spotifyResponseFunction();
+            break;
 
-    case 'do-what-it-says':
-        break;
+        case 'movie-this':
+            if (!userInfo) userInfo = "Mr.+Nobody"
+            movieUrl = `https://omdbapi.com/?t=${userInfo}&apikey=${omdbApiKey}`;
+            axiosCall(movieUrl, ombdResponseFunction)
+            break;
 
-    default:
-        console.log(""); console.log("");
-        console.log(chalk.blue("Please input a valid LIRI command"));
-        console.log("");
-        console.log(`++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
-        console.log("");
-        console.log(chalk.yellow("Valid commands are:"));
-        console.log("");
-        console.log(`concert-this <${chalk.green('artist/band name here')}>`);
-        console.log("");
-        console.log(`movie-this <${chalk.green('movie name here')}>`);
-        console.log("");
-        console.log(`spotify-this-song <${chalk.green('song name here')}>`);
-        console.log("");
-        console.log("do-what-it-says");
-        console.log(""); console.log("");
-        break;
+        case 'do-what-it-says':
+            break;
+
+        default:
+            console.log(""); console.log("");
+            console.log(chalk.green("Please input a valid LIRI command"));
+            console.log("");
+            console.log(`++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
+            console.log("");
+            console.log(chalk.yellow("Valid commands are:"));
+            console.log("");
+            console.log(`concert-this <${chalk.green('artist/band name here')}>`);
+            console.log("");
+            console.log(`movie-this <${chalk.green('movie name here')}>`);
+            console.log("");
+            console.log(`spotify-this-song <${chalk.green('song name here')}>`);
+            console.log("");
+            console.log("do-what-it-says");
+            console.log(""); console.log("");
+            break;
+    }
+}
+
+// conditional logic for do-what-it-says command 
+// update userTask with task from random.txt file
+// update userInfo 
+if (userTask === "do-what-it-says") {
+    fs.readFile('./random.txt', 'utf8', (error, data) => {
+
+        if (error) console.log(error);
+
+        dataArray = data.split(',');
+        userTask = dataArray[0];
+        userInfo = dataArray[1];
+        userInfo = dataArray[1];
+
+        switchCase();
+    })
+} else {
+    switchCase();
 }
