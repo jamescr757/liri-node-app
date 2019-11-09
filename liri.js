@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-// import api keys 
+// import api keys
 const spotifyApiKey = process.env.spotify_api_key;
 const spotifySecret = process.env.spotify_secret;
 const omdbApiKey = process.env.omdb_api_key;
@@ -13,44 +13,56 @@ const moment = require('moment');
 const chalk = require('chalk');
 const Spotify = require('node-spotify-api');
 
-// use process argv to take in user input 
+// use process argv to take in user input
 // slice the array from 3
-// switch case comparing index 0 to concert-this, spotify-this-song, movie-this, and do-what-it-says 
-// default return something so the user knows it was invalid input          
+// switch case comparing index 0 to concert-this, spotify-this-song, movie-this, and do-what-it-says
+// default return something so the user knows it was invalid input
 const userTask = process.argv[2];
 const userInfo = process.argv.slice(3).join("+");
 
-// generic axios get url call 
+// generic axios get url call
 // response function inputs optional
 function axiosCall(url, responseFunction) {
     axios.get(url)
     .then(response => responseFunction(response))
-    .catch(error => console.log(error.response.status))
+    .catch(error => {
+        console.log(error.response.status)
+        console.log("");
+        console.log(`Please input a valid search term`);
+        console.log("");
+    });
 }
 
-// response.data[0].venue has name and venue location 
+// response.data[0].venue has name and venue location
 // response.data[0].datetime has date of the event
 // loop through data array and log the info
 // display city info based on USA or not
 function bandsInTownResponseFunction(response) {
-    console.log("");
+    console.log(""); console.log("");
 
     response.data.forEach(element => {
-        console.log(moment(element.datetime).format('MM/DD/YYYY'));
-        console.log(element.venue.name);
-
         if (element.venue.country === "United States") {
-            console.log(`${element.venue.city}, ${element.venue.region}`);
+            console.log(
+                chalk.blue(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                element.venue.name + " -- " +
+                chalk.blue(element.venue.city + ", " +
+                element.venue.region)
+            );
         } else {
-            console.log(`${element.venue.city}, ${element.venue.country}`);
+            console.log(
+                chalk.blue(moment(element.datetime).format('MM/DD/YYYY')) + " -- " +
+                element.venue.name + " -- " +
+                chalk.blue(element.venue.city + ", " +
+                element.venue.country)
+            );
         }
 
-        console.log("");        
+        console.log(""); console.log("");
     });
 }
 
 switch (userTask) {
-    
+
     // add user info to bands url
     // run axios call with bands function
     case 'concert-this':
@@ -68,8 +80,7 @@ switch (userTask) {
         break;
 
     default:
-        console.log("");
-        console.log("");
+        console.log(""); console.log("");
         console.log(chalk.blue("Please input a valid LIRI command"));
         console.log("");
         console.log(`++++++++++++++++++++++++++++++++++++++++++++++++++++++++`);
@@ -83,7 +94,6 @@ switch (userTask) {
         console.log(`spotify-this-song <${chalk.green('song name here')}>`);
         console.log("");
         console.log("do-what-it-says");
-        console.log("");
-        console.log("");
+        console.log(""); console.log("");
         break;
 }
