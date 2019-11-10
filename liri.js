@@ -200,6 +200,16 @@ function switchCase() {
     }
 }
 
+// append user commands to log.txt 
+// use fs and input the text 
+function myAppendFile(text) {
+    fs.appendFile('./log.txt', text, error => {
+        if (error) console.log(error);
+
+        console.log(`text was appended to file`);
+    })
+}
+
 // conditional logic for do-what-it-says command 
 // update userTask with task from random.txt file
 // update userInfo 
@@ -213,9 +223,12 @@ if (userTask === "do-what-it-says") {
         userTask = dataArray[0];
         userInfo = dataArray[1];
 
+        myAppendFile(`${userTask} ${userInfo}, `);
+        
         // need switch case here because asynchronous function
         switchCase();
     })
 } else {
+    myAppendFile(`${userTask} ${userInfo}, `);
     switchCase();
 }
