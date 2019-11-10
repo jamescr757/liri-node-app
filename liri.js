@@ -27,7 +27,7 @@ let movieUrl;
 function axiosCall(url, responseFunction) {
     axios.get(url)
     .then(response => responseFunction(response))
-    .catch(error => {
+    .catch(() => {
         console.log("");
         console.log(chalk.green('Please input a valid search term'));
         console.log("");
