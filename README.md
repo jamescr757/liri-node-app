@@ -1,6 +1,6 @@
 # liri-node-app
 
-####Steps required to use this app:
+#### Steps required to use this app:
 
 `touch .env` in root directory
 
