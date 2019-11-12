@@ -1,4 +1,4 @@
-# liri-node-app
+# LIRI NodeJS App
 
 #### Steps required to use this app:
 
